@@ -39,6 +39,10 @@ func (p *BufferPool) Take() []byte {
 
 // Return buffer to the pool, stash if pool is full
 func (p *BufferPool) Return(b []byte) int {
+	if cap(b) < p.BufferSize {
+		b = b[:0]
+		return 0
+	}
 	select {
 	case p.Buffers <- b:
 		return 1
